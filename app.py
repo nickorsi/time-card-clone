@@ -1,6 +1,6 @@
 import os #---> When using SQL Alchmey
 
-from models import db, connect_bd #---> When using SQL Alchemy
+from models import db, connect_db #---> When using SQL Alchemy
 
 
 from flask import Flask, request, render_template, redirect, flash, session

@@ -6,6 +6,7 @@ db = SQLAlchemy()
 
 bcrypt = Bcrypt()
 
+
 def connect_db(app):
     """Connect to database."""
 
@@ -13,7 +14,8 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-class Project(db.model):
+
+class Project(db.Model):
     """Projects in the system.
     Relationships built to the following classes:
     -StaffRole (join table)
@@ -30,7 +32,7 @@ class Project(db.model):
         primary_key=True,
     )
 
-    project_name = db.Column(
+    name = db.Column(
         db.String(50),
         nullable=False,
     )
@@ -52,7 +54,8 @@ class Project(db.model):
         backref="project"
     )
 
-class Staff(db.model):
+
+class Staff(db.Model):
     """Staff members in the system.
     Relationships built to the following classes:
     -StaffRole (join table)
@@ -96,7 +99,7 @@ class Staff(db.model):
         nullable=False,
     )
 
-    daily_reports = db.relationship('DailyReport', beackref='author')
+    daily_reports = db.relationship('DailyReport', backref='author')
 
     def __repr__(self):
         return f"<Staff #{self.id}: {self.first_name}, {self.last_name}, {self.email}, {self.clearance}>"
@@ -143,6 +146,7 @@ class Staff(db.model):
 
         return False
 
+
 class StaffRole(db.Model):
     """Staff Roles in the System.
     Acts as a join table for Staff and Project
@@ -152,7 +156,7 @@ class StaffRole(db.Model):
 
     project_code = db.Column(
         db.String(20),
-        db.ForeignKey('projects.id'),
+        db.ForeignKey('projects.code'),
         primary_key=True,
     )
 
@@ -171,7 +175,8 @@ class StaffRole(db.Model):
     project = db.relationship('Project', backref="staff_roles")
     staff = db.relationship('Staff', backref="staff_roles")
 
-class Craft(db.model):
+
+class Craft(db.Model):
     """Craft members in the system.
     Relationships built to the following classes:
     -CraftRole (join table)
@@ -220,7 +225,7 @@ class CraftRole(db.Model):
 
     project_code = db.Column(
         db.String(20),
-        db.ForeignKey('projects.id'),
+        db.ForeignKey('projects.code'),
         primary_key=True,
     )
 
@@ -238,6 +243,7 @@ class CraftRole(db.Model):
 
     project = db.relationship('Project', backref="craft_roles")
     craft = db.relationship('Craft', backref="craft_roles")
+
 
 class CostCode(db.Model):
     """Cost codes saved in the system.
@@ -264,10 +270,10 @@ class CostCode(db.Model):
 
     project_code = db.Column(
         db.String(20),
-        db.ForeignKey('projects.id')
+        db.ForeignKey('projects.code')
     )
 
-    clearance_level = db.Column(
+    clearance = db.Column(
         db.Integer,
         db.ForeignKey('clearances.level')
     )
@@ -292,6 +298,7 @@ class CostCode(db.Model):
         nullable=False,
     )
 
+
 class Clearance(db.Model):
     """Clearance levels saved in the system.
     Relationships built to the following classes:
@@ -312,6 +319,7 @@ class Clearance(db.Model):
         nullable=False,
     )
 
+
 class DailyReport(db.Model):
     """Daily Reports in the system.
     Relationships built to the following classes:
@@ -321,7 +329,7 @@ class DailyReport(db.Model):
     -CraftSummary
     """
 
-    __tablename__ = "dailyreports"
+    __tablename__ = "daily_reports"
 
     id = db.Column(
         db.Integer,
@@ -365,6 +373,7 @@ class DailyReport(db.Model):
         backref="daily_report",
     )
 
+
 class DailyReportItem(db.Model):
     """Daily Report Items in the system.
     Relationships built with the following classes:
@@ -399,7 +408,8 @@ class DailyReportItem(db.Model):
         nullable=False,
     )
 
-class CostCodeSummary(db.model):
+
+class CostCodeSummary(db.Model):
     """Cost Code Summaries in the system.
     Relationships built with the following classes:
     -DailyReport
@@ -427,7 +437,8 @@ class CostCodeSummary(db.model):
         nullable=False,
     )
 
-class CraftSummary(db.model):
+
+class CraftSummary(db.Model):
     """Craft Summaries in the system.
     Relationships built with the following classes:
     -DailyReport
@@ -449,4 +460,3 @@ class CraftSummary(db.model):
         db.String(500),
         nullable=False,
     )
-

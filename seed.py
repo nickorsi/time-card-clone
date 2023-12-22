@@ -9,184 +9,340 @@ db.create_all()
 
 # Create project
 
-project = Project('100000', 'Gross Reservoir')
+project = Project(
+    code='100000',
+    name='Gross Reservoir',
+)
 
 db.session.add(project)
 db.session.commit
 
 # Create clearance levels
 
-clr1 = Clearance(1, 'Eng')
+clr1 = Clearance(
+    level=1,
+    name='Eng'
+)
 
 db.session.add(clr1)
 db.session.commit()
 
-clr2 = Clearance(2, 'Sup')
+clr2 = Clearance(
+    level=2,
+    name='Sup'
+)
 
 db.session.add(clr2)
 db.session.commit()
 
-clr3 = Clearance(3, 'Business')
+clr3 = Clearance(
+    level=3,
+    name='Business'
+)
 
 db.session.add(clr3)
 db.session.commit()
 
-clr4 = Clearance(4, 'Project Eng')
+clr4 = Clearance(
+    level=4,
+    name='Project Eng'
+)
 
 db.session.add(clr4)
 db.session.commit()
 
-clr5 = Clearance(5, 'Admin')
+clr5 = Clearance(
+    level=5,
+    name='Admin'
+)
 
 db.session.add(clr5)
 db.session.commit()
 
 # Create staff
 
-staff1 = Staff.register('Engineer', 'Test', 'engineer@gmail.com', 1, 'engineer')
+staff1 = Staff.register(
+    first_name='Engineer',
+    last_name='Test',
+    email='engineer@gmail.com',
+    clearance=1,
+    password='engineer'
+)
 
 db.session.commit()
 
 staff2 = Staff.register(
-    'Superintendent',
-    'Test',
-    'superintendent@gmail.com',
-    2,
-    'superintendent'
+    first_name='Superintendent',
+    last_name='Test',
+    email='superintendent@gmail.com',
+    clearance= 2,
+    password='superintendent'
 )
 
 db.session.commit()
 
-staff3 = Staff.register('Business', 'Test', 'business@gmail.com', 3, 'business')
+staff3 = Staff.register(
+    first_name='Business',
+    last_name='Test',
+    email='business@gmail.com',
+    clearance=3,
+    password='business'
+)
 
 db.session.commit()
 
 staff4 = Staff.register(
-    'Projecteng',
-    'Test',
-    'projecteng@gmail.com',
-    4,
-    'projecteng'
+    first_name='Projecteng',
+    last_name='Test',
+    email='projecteng@gmail.com',
+    clearance= 4,
+    password='projecteng'
 )
 
 db.session.commit()
 
-staff5 = Staff.register('Admin', 'Test', 'admin@gmail.com', 5, 'admin')
+staff5 = Staff.register(
+    first_name='Admin',
+    last_name='Test',
+    email='admin@gmail.com',
+    clearance=5,
+    password='admin'
+)
 
 db.session.commit()
 
 # Create Staff Roles
 
-staff1.staff_roles.append(StaffRole(project_id=project.code, role="Exc Engineer"))
+staff1.staff_roles.append(
+    StaffRole(
+        project_code=project.code,
+        staff_role="Exc Engineer"
+    )
+)
 
 db.session.commit()
 
-staff2.staff_roles.append(StaffRole(project_id=project.code, role="Exc Superintendent"))
+staff2.staff_roles.append(
+    StaffRole(
+        project_code=project.code,
+        staff_role="Exc Superintendent"
+    )
+)
 
 db.session.commit()
 
-staff3.staff_roles.append(StaffRole(project_id=project.code, role="Business Controller"))
+staff3.staff_roles.append(
+    StaffRole(
+        project_code=project.code,
+        staff_role="Business Controller"
+    )
+)
 
 db.session.commit()
 
-staff4.staff_roles.append(StaffRole(project_id=project.code, role="Project Engineer"))
+staff4.staff_roles.append(
+    StaffRole(
+        project_code=project.code,
+        staff_role="Project Engineer"
+    )
+)
 
 db.session.commit()
 
-staff5.staff_roles.append(StaffRole(project_id=project.code, role="Project Admin"))
+staff5.staff_roles.append(
+    StaffRole(
+        project_code=project.code,
+        staff_role="Project Admin"
+    )
+)
 
 db.session.commit()
 
 # Create craft
 
-craft1 = Craft.register('Foreman', 'Test')
+craft1 = Craft.register(
+    first_name='Foreman',
+    last_name='Test'
+)
 
 db.session.commit()
 
-craft2 = Craft.register('Operator', 'Test')
+craft2 = Craft.register(
+    first_name='Operator',
+    last_name='Test'
+)
 
 db.session.commit()
 
-craft3 = Craft.register('Laborer', 'Test')
+craft3 = Craft.register(
+    first_name='Laborer',
+    last_name='Test'
+)
 
 db.session.commit()
 
 # Create craft roles
 
-craft1.craft_roles.append(CraftRole(project_id=project.code, role="Exc Foreman"))
+craft1.craft_roles.append(
+    CraftRole(
+        project_code=project.code,
+        craft_role="Exc Foreman"
+    )
+)
 
 db.session.commit()
 
-craft2.craft_roles.append(CraftRole(project_id=project.code, role="Exc Operator"))
+craft2.craft_roles.append(
+    CraftRole(
+        project_code=project.code,
+        craft_role="Exc Operator"
+    )
+)
 
 db.session.commit()
 
-craft3.craft_roles.append(CraftRole(project_id=project.code, role="Exc Laborer"))
+craft3.craft_roles.append(
+    CraftRole(
+        project_code=project.code,
+        craft_role="Exc Laborer"
+    )
+)
 
 db.session.commit()
 
 ## Create cost codes
 
-code1 = CostCode("1000", "Clear and Grub", project.code, 1, 22500, "SF", 20, 3600)
+code1 = CostCode(
+    code="1000",
+    name="Clear and Grub",
+    project_code=project.code,
+    clearance=1,
+    budgeted_qty=22500,
+    qty_units="SF",
+    budgeted_mhrs=20,
+    budgeted_cost=3600
+)
 
 db.session.add(code1)
 db.session.commit()
 
-code2 = CostCode("1001", "Excavate", project.code, 1, 8333, "CY", 42, 7560)
+code2 = CostCode(
+    code="1001",
+    name="Excavate",
+    project_code=project.code,
+    clearance=1,
+    budgeted_qty=8333,
+    qty_units="CY",
+    budgeted_mhrs=42,
+    budgeted_cost=7560
+)
 
 db.session.add(code2)
 db.session.commit()
 
-code3 = CostCode("1002", "Haul/Dump Exc", project.code, 1, 8333, "CY", 420, 33600)
+code3 = CostCode(
+    code="1002",
+    name="Haul/Dump Exc",
+    project_code=project.code,
+    clearance=1,
+    budgeted_qty=8333,
+    qty_units="CY",
+    budgeted_mhrs=420,
+    budgeted_cost=33600
+)
 
 db.session.add(code3)
 db.session.commit()
 
 # Create daily report
 
-daily1 = DailyReport("2023.12.21", staff1.id, staff2.id, "submitted")
+daily1 = DailyReport(
+    date="2023.12.21",
+    author_id=staff1.id,
+    approver_id=staff2.id,
+    status="submitted")
 
 db.session.add(daily1)
 db.session.commit()
 
 # Create daily report items
 
-item1 = DailyReportItem(daily1.id, craft1.id, code1.code, 4)
+item1 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft1.id,
+    cost_code=code1.code,
+    hrs_worked=4
+)
 
 db.session.add(item1)
 db.session.commit()
 
-item2 = DailyReportItem(daily1.id, craft1.id, code2.code, 4)
+item2 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft1.id,
+    cost_code=code2.code,
+    hrs_worked=4
+)
 
 db.session.add(item2)
 db.session.commit()
 
-item3 = DailyReportItem(daily1.id, craft1.id, code3.code, 2)
+item3 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft1.id,
+    cost_code=code3.code,
+    hrs_worked=2
+)
 
 db.session.add(item3)
 db.session.commit()
 
-item4 = DailyReportItem(daily1.id, craft2.id, code1.code, 5)
+item4 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft2.id,
+    cost_code=code1.code,
+    hrs_worked=5
+)
 
 db.session.add(item4)
 db.session.commit()
 
-item5 = DailyReportItem(daily1.id, craft2.id, code2.code, 5)
+item5 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft2.id,
+    cost_code=code2.code,
+    hrs_worked=5
+)
 
 db.session.add(item5)
 db.session.commit()
 
-item6 = DailyReportItem(daily1.id, craft3.id, code1.code, 2)
+item6 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft3.id,
+    cost_code=code1.code,
+    hrs_worked=2
+)
 
 db.session.add(item6)
 db.session.commit()
 
-item7 = DailyReportItem(daily1.id, craft3.id, code2.code, 4)
+item7 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft3.id,
+    cost_code=code2.code,
+    hrs_worked=4
+)
 
 db.session.add(item7)
 db.session.commit()
 
-item8 = DailyReportItem(daily1.id, craft3.id, code3.code, 4)
+item8 = DailyReportItem(
+    daily_report_id=daily1.id,
+    craft_id=craft3.id,
+    cost_code=code3.code,
+    hrs_worked=4
+)
 
 db.session.add(item8)
 db.session.commit()
@@ -194,30 +350,30 @@ db.session.commit()
 # Create cost code summaries
 
 code_summary1 = CostCodeSummary(
-    daily1.id,
-    code1.code,
-    22500,
-    "Started and finished grubbing site today."
+    daily_report_id=daily1.id,
+    cost_code=code1.code,
+    qty_installed=22500,
+    note="Started and finished grubbing site today."
 )
 
 db.session.add(code_summary1)
 db.session.commit()
 
 code_summary2 = CostCodeSummary(
-    daily1.id,
-    code2.code,
-    200,
-    "Started exc today, had to spend time setting up operation."
+    daily_report_id=daily1.id,
+    cost_code=code2.code,
+    qty_installed=200,
+    note="Started exc today, had to spend time setting up operation."
 )
 
 db.session.add(code_summary2)
 db.session.commit()
 
 code_summary3 = CostCodeSummary(
-    daily1.id,
-    code3.code,
-    200,
-    "Started haul today, only got a single round of trucks out."
+    daily_report_id=daily1.id,
+    cost_code=code3.code,
+    qty_installed=200,
+    note="Started haul today, only got a single round of trucks out."
 )
 
 db.session.add(code_summary3)
@@ -226,27 +382,27 @@ db.session.commit()
 # Create craft summaries
 
 craft_summary1 = CraftSummary(
-    daily1.id,
-    craft1.id,
-    "No injuries, took all breaks and lunch."
+    daily_report_id=daily1.id,
+    craft_id=craft1.id,
+    note="No injuries, took all breaks and lunch."
 )
 
 db.session.add(craft_summary1)
 db.session.commit()
 
 craft_summary2 = CraftSummary(
-    daily1.id,
-    craft2.id,
-    "No injuries, took all breaks and lunch."
+    daily_report_id=daily1.id,
+    craft_id=craft2.id,
+    note="No injuries, took all breaks and lunch."
 )
 
 db.session.add(craft_summary2)
 db.session.commit()
 
 craft_summary3 = CraftSummary(
-    daily1.id,
-    craft3.id,
-    "No injuries, took all breaks and lunch."
+    daily_report_id=daily1.id,
+    craft_id=craft3.id,
+    note="No injuries, took all breaks and lunch."
 )
 
 db.session.add(craft_summary3)
