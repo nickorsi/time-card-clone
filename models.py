@@ -28,13 +28,19 @@ class Project(db.Model):
     __tablename__ = "projects"
 
     code = db.Column(
-        db.String(20),
+        db.String(6),
         primary_key=True,
     )
 
     name = db.Column(
         db.String(50),
         nullable=False,
+    )
+
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default="active",
     )
 
     staff = db.relationship(
@@ -91,12 +97,18 @@ class Staff(db.Model):
         db.Integer,
         db.ForeignKey('clearances.level'),
         nullable=False,
-        default=1,
+        default=0,
     )
 
     password = db.Column(
-        db.String(100),
+        db.String(50),
         nullable=False,
+    )
+
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default="active",
     )
 
     daily_reports = db.relationship('DailyReport', backref='author')
@@ -201,6 +213,12 @@ class Craft(db.Model):
         nullable=False,
     )
 
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default="active",
+    )
+
     @classmethod
     def register(cls, first_name, last_name):
         """Register a craft person.
@@ -249,7 +267,6 @@ class CostCode(db.Model):
     """Cost codes saved in the system.
     Relationships built to the following classes:
     -Project
-    -Clearance
     -DailyReportItem (join table)
     -DailyReport
     -CostCodeSummary
@@ -273,9 +290,10 @@ class CostCode(db.Model):
         db.ForeignKey('projects.code')
     )
 
-    clearance = db.Column(
-        db.Integer,
-        db.ForeignKey('clearances.level')
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default="active",
     )
 
     budgeted_qty = db.Column(
@@ -356,6 +374,7 @@ class DailyReport(db.Model):
     status = db.Column(
         db.String(20),
         nullable=False,
+        default="started",
     )
 
     hrs = db.relationship(

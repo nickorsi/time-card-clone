@@ -19,6 +19,11 @@ db.session.commit
 
 # Create clearance levels
 
+clr0 = Clearance(
+    level=0,
+    name='None'
+)
+
 clr1 = Clearance(
     level=1,
     name='Eng'
@@ -216,7 +221,7 @@ code1 = CostCode(
     code="1000",
     name="Clear and Grub",
     project_code=project.code,
-    clearance=1,
+    status="open",
     budgeted_qty=22500,
     qty_units="SF",
     budgeted_mhrs=20,
@@ -230,7 +235,7 @@ code2 = CostCode(
     code="1001",
     name="Excavate",
     project_code=project.code,
-    clearance=1,
+    status="open",
     budgeted_qty=8333,
     qty_units="CY",
     budgeted_mhrs=42,
@@ -244,7 +249,7 @@ code3 = CostCode(
     code="1002",
     name="Haul/Dump Exc",
     project_code=project.code,
-    clearance=1,
+    status="open",
     budgeted_qty=8333,
     qty_units="CY",
     budgeted_mhrs=420,
@@ -260,7 +265,7 @@ daily1 = DailyReport(
     date="2023.12.21",
     author_id=staff1.id,
     approver_id=staff2.id,
-    status="submitted")
+    status="approved")
 
 db.session.add(daily1)
 db.session.commit()
