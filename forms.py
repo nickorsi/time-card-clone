@@ -10,8 +10,16 @@ def not_empty(form,field):
     if field.data.strip() == "":
         raise ValidationError('Field cannot be left blank.')
 
-class RegisterStaff(FlaskForm):
-    """Register Staff Form"""
+def num_like(form,field):
+    """Checks field data can convert to a number"""
+    try:
+        int(field.data)
+    except ValueError:
+        raise ValidationError('Must only have numbers in field.')
+
+
+class SignupStaff(FlaskForm):
+    """Signup Staff Form"""
 
     first_name = StringField(
         "First Name",
@@ -33,10 +41,10 @@ class RegisterStaff(FlaskForm):
         validators=[InputRequired(), Length(min = 8, max = 50)]
     )
 
-class SignInForm(FlaskForm): #---> Sample form
-    """Staff Sign In Form"""
+class LogInForm(FlaskForm):
+    """Staff Log In Form"""
 
-    username = StringField(
+    email = StringField(
         "Email",
         validators=[InputRequired(), Email()]
     )
@@ -45,3 +53,19 @@ class SignInForm(FlaskForm): #---> Sample form
         "Password",
         validators=[InputRequired(), Length(min = 8, max = 50)]
     )
+
+class ProjectForm(FlaskForm):
+    """Project Form"""
+
+    code = StringField(
+        "Project Code",
+        validators=[InputRequired(),Length(min=6),num_like]
+    )
+
+    name = StringField(
+        "Project Name",
+        validators=[InputRequired(), not_empty, Length(max=50)]
+    )
+
+class CSRFForm(FlaskForm):
+    """Form solely meant to genrate a CSRF token."""

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div class="row justify-content-md-center">
+    <div class="col-md-7 col-lg-5">
+      <h2 class="join-message">Staff</h2>
+      <p>Search staff records by <strong>first name</strong>.</p>
+      <form class="navbar-form navbar-end" action="/staff">
+        <input
+            name="q"
+            class="form-control"
+            placeholder="Search Time Card Clone"
+            aria-label="Search"
+            id="search">
+        <button class="btn btn-default">
+          <span class="bi bi-search"></span>
+        </button>
+    </div>
+    <div class="col-md-7 col-lg-5">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Projects</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for person in staff %}
+            {% if g.user.clearance < 5 and person.status == "active" %}
+              <tr>
+                  <td>
+                    <a href="/staff/{{ person.id }}">
+                      {{ person.first_name }} {{ person.last_name }}
+                    </a>
+                  </td>
+                  <td>{{ person.email }}</td>
+                  <td>
+                    <ul>
+                      {% for project in person.projects %}
+                        {% if project.status == "active" %}
+                          <li>{{ project.name }}</li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </td>
+                </tr>
+            {% elif g.user.clearance > 4 %}
+              <tr>
+                <td>
+                  <a href="/staff/{{ person.id }}">
+                    {% if person.status == "active" %}
+                      {{ person.first_name }} {{ person.last_name }}
+                    {% else %}
+                      {{ person.first_name }} {{ person.last_name }} (Inactive)
+                    {% endif %}
+                  </a>
+                </td>
+                <td>{{ person.email }}</td>
+                <td>
+                  <ul>
+                    {% for project in person.projects %}
+                      {% if project.status == "active" %}
+                        <li>{{ project.name }}</li>
+                        {% else %}
+                        <li>{{ project.name }} (Inactive)</li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}

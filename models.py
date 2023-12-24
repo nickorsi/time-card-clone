@@ -101,14 +101,14 @@ class Staff(db.Model):
     )
 
     password = db.Column(
-        db.String(50),
+        db.String(100),
         nullable=False,
     )
 
     status = db.Column(
         db.String(20),
         nullable=False,
-        default="active",
+        default='active',
     )
 
     daily_reports = db.relationship('DailyReport', backref='author')
@@ -117,7 +117,7 @@ class Staff(db.Model):
         return f"<Staff #{self.id}: {self.first_name}, {self.last_name}, {self.email}, {self.clearance}>"
 
     @classmethod
-    def register(cls, first_name, last_name, email, clearance, password):
+    def register(cls, first_name, last_name, email, clearance, password, status="active"):
         """Register a staff person.
 
         Hashes password and adds user to session.
@@ -131,6 +131,7 @@ class Staff(db.Model):
             email=email,
             clearance=clearance,
             password=hashed_pwd,
+            status=status
         )
 
         db.session.add(staff)
@@ -321,7 +322,6 @@ class Clearance(db.Model):
     """Clearance levels saved in the system.
     Relationships built to the following classes:
     -Staff
-    -CostCode
     """
 
     __tablename__ = "clearances"

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div>
+    <h1>Welcome {{ g.user.first_name }}!</h1>
+    {% if g.user.clearance < 4 %}
+      <h4>You can navigate to your assigned projects list below.</h4>
+    {% elif g.user.clearance > 3 %}
+      <h4>You can navigate to all projects in the company below.</h4>
+    {% endif %}
+    <a href="/projects" class="btn btn-primary">Projects</a>
+    <h4>You can navigate to the staff list below</h4>
+    <a href="/staff" class="btn btn-primary">Staff</a>
+  </div>
+{% endblock %}

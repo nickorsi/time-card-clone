@@ -9,12 +9,21 @@ db.create_all()
 
 # Create project
 
-project = Project(
+project1 = Project(
     code='100000',
     name='Gross Reservoir',
 )
 
-db.session.add(project)
+db.session.add(project1)
+db.session.commit
+
+project2 = Project(
+    code='100001',
+    name='Hell Hole',
+    status="inactive"
+)
+
+db.session.add(project2)
 db.session.commit
 
 # Create clearance levels
@@ -23,6 +32,9 @@ clr0 = Clearance(
     level=0,
     name='None'
 )
+
+db.session.add(clr0)
+db.session.commit()
 
 clr1 = Clearance(
     level=1,
@@ -111,7 +123,18 @@ staff5 = Staff.register(
     last_name='Test',
     email='admin@gmail.com',
     clearance=5,
-    password='admin'
+    password='adminadmin'
+)
+
+db.session.commit()
+
+staff6 = Staff.register(
+    first_name='Admin2',
+    last_name='Test',
+    email='admin2@gmail.com',
+    clearance=5,
+    password='adminadmin',
+    status="inactive",
 )
 
 db.session.commit()
@@ -120,7 +143,7 @@ db.session.commit()
 
 staff1.staff_roles.append(
     StaffRole(
-        project_code=project.code,
+        project_code=project1.code,
         staff_role="Exc Engineer"
     )
 )
@@ -129,7 +152,7 @@ db.session.commit()
 
 staff2.staff_roles.append(
     StaffRole(
-        project_code=project.code,
+        project_code=project1.code,
         staff_role="Exc Superintendent"
     )
 )
@@ -138,7 +161,7 @@ db.session.commit()
 
 staff3.staff_roles.append(
     StaffRole(
-        project_code=project.code,
+        project_code=project1.code,
         staff_role="Business Controller"
     )
 )
@@ -147,7 +170,7 @@ db.session.commit()
 
 staff4.staff_roles.append(
     StaffRole(
-        project_code=project.code,
+        project_code=project1.code,
         staff_role="Project Engineer"
     )
 )
@@ -156,7 +179,25 @@ db.session.commit()
 
 staff5.staff_roles.append(
     StaffRole(
-        project_code=project.code,
+        project_code=project1.code,
+        staff_role="Project Admin"
+    )
+)
+
+db.session.commit()
+
+staff5.staff_roles.append(
+    StaffRole(
+        project_code=project2.code,
+        staff_role="Project Admin"
+    )
+)
+
+db.session.commit()
+
+staff6.staff_roles.append(
+    StaffRole(
+        project_code=project2.code,
         staff_role="Project Admin"
     )
 )
@@ -190,7 +231,7 @@ db.session.commit()
 
 craft1.craft_roles.append(
     CraftRole(
-        project_code=project.code,
+        project_code=project1.code,
         craft_role="Exc Foreman"
     )
 )
@@ -199,7 +240,7 @@ db.session.commit()
 
 craft2.craft_roles.append(
     CraftRole(
-        project_code=project.code,
+        project_code=project1.code,
         craft_role="Exc Operator"
     )
 )
@@ -208,7 +249,7 @@ db.session.commit()
 
 craft3.craft_roles.append(
     CraftRole(
-        project_code=project.code,
+        project_code=project1.code,
         craft_role="Exc Laborer"
     )
 )
@@ -220,7 +261,7 @@ db.session.commit()
 code1 = CostCode(
     code="1000",
     name="Clear and Grub",
-    project_code=project.code,
+    project_code=project1.code,
     status="open",
     budgeted_qty=22500,
     qty_units="SF",
@@ -234,7 +275,7 @@ db.session.commit()
 code2 = CostCode(
     code="1001",
     name="Excavate",
-    project_code=project.code,
+    project_code=project1.code,
     status="open",
     budgeted_qty=8333,
     qty_units="CY",
@@ -248,7 +289,7 @@ db.session.commit()
 code3 = CostCode(
     code="1002",
     name="Haul/Dump Exc",
-    project_code=project.code,
+    project_code=project1.code,
     status="open",
     budgeted_qty=8333,
     qty_units="CY",

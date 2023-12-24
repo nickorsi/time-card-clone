@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Time Card Clone</title>
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css">
+  <script src="https://unpkg.com/bootstrap"></script>
+
+  <script src="https://unpkg.com/jquery"></script>
+
+
+<body>
+
+<nav class="navbar navbar-expand">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <a href="/" class="navbar-brand">
+        Home
+      </a>
+    </div>
+
+    <ul class="nav navbar-nav navbar-right">
+
+      {% if not g.user %}
+        <li><a href="/signup" class="m-1">Sign up</a></li>
+        <li><a href="/login" class="m-1">Log in</a></li>
+      {% else %}
+        <li>
+          <a href="/staff/{{ g.user.id }}">
+            Profile
+          </a>
+        </li>
+        <form action="/logout" method="POST">
+          {{ g.csrf_form.hidden_tag() }}
+          <button class="btn btn-primary">Log Out</button>
+        </form>
+      {% endif %}
+
+    </ul>
+  </div>
+</nav>
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Library</li>
+    </ol>
+  </div>
+</nav>
+
+<div class="container">
+
+  {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+
+  {% block content %}
+  {% endblock %}
+
+</div>
+</body>
+</html>
