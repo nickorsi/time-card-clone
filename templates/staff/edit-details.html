@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/staff">Staff</a></li>
+      <li class="breadcrumb-item"><a href="/staff/{{ staff.id }}">Profile</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div>
+  <h2>Edit Profile.</h2>
+      <form method="POST" id="staff_edit_form">
+        {{ form.hidden_tag() }}
+
+        <div class="container">
+          {{ form.first_name.label}}
+          {% if g.user.id == staff.id %}
+            {{ form.first_name }}
+          {% elif g.user.clearance > 4 %}
+            {{ form.first_name(readonly=true) }}
+          {% endif %}
+          {% for error in form.first_name.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="container">
+          {{ form.last_name.label}}
+          {% if g.user.id == staff.id %}
+            {{ form.last_name }}
+          {% elif g.user.clearance > 4 %}
+            {{ form.last_name(readonly=true) }}
+          {% endif %}
+          {% for error in form.last_name.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="container">
+          {{ form.clearance.label}}
+          {% if g.user.id == staff.id %}
+            {{ form.clearance(readonly=true) }}
+          {% elif g.user.clearance > 4 %}
+            {{ form.clearance }}
+          {% endif %}
+          {% for error in form.clearance.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="container">
+          {{ form.status.label}}
+          {% if g.user.id == staff.id %}
+            {{ form.status(readonly=true) }}
+          {% elif g.user.clearance > 4 %}
+            {{ form.status }}
+          {% endif %}
+          {% for error in form.status.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <a href="/staff/{{ staff.id }}" class="btn btn-secondary">Cancel</a>
+        <button class="btn btn-primary">Save</button>
+      </form>
+</div>
+
+{% endblock %}

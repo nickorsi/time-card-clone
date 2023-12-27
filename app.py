@@ -1,11 +1,11 @@
 import os  # ---> When using SQL Alchmey
 
-from models import db, connect_db, Staff
+from models import db, connect_db, Staff, Project
 
 
 from flask import Flask, request, render_template, redirect, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension  # ---> Debugger tool
-from forms import CSRFForm, SignupStaff, LogInForm
+from forms import CSRFForm, SignupStaffFrom, LogInForm, EditStaffForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -75,7 +75,7 @@ def signup():
 
     log_out()
 
-    form = SignupStaff()
+    form = SignupStaffFrom()
 
     if form.validate_on_submit():
         try:
@@ -83,8 +83,8 @@ def signup():
                 first_name=form.first_name.data,
                 last_name=form.last_name.data,
                 email=form.email.data,
+                image_url=form.image_url.data or Staff.image_url.default.arg,
                 password=form.password.data,
-                clearance=0,
             )
             db.session.commit()
 
@@ -151,6 +151,7 @@ def show_staff():
     If user is not an admin, only shows active staff.
     If user is admin, shows all staff in system.
     """
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -163,6 +164,93 @@ def show_staff():
         staff = Staff.query.all()
 
     return render_template('staff/all-staff.html', staff=staff)
+
+@app.get('/staff/<int:staff_id>')
+def show_staff_profile(staff_id):
+    """Shows the profile of the specific staff member.
+    Non admin users can see profile of all active staff, but only
+    -First name
+    -Last name
+    -Current roles
+    -Project Experience
+    Users viewing their own profile can also see their
+    -Clearane level
+    -Employment status
+    -Edit button
+    Admins can see all of the above for both active and inactive employees and
+    project, and roles.
+    """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    staff = Staff.query.get_or_404(f'{staff_id}')
+
+    if g.user.clearance < 5 and staff.status != "active":
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    return render_template('staff/details.html', staff=staff)
+
+@app.route('/staff/<int:staff_id>/edit', methods=["GET", "POST"])
+def edit_staff(staff_id):
+    """ Handles user edits.
+    If user editing their own profile, can edit name.
+    If user is admin, can edit only clearance level and status.
+    """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    staff = Staff.query.get_or_404(f'{staff_id}')
+
+    if g.user.clearance < 5 and staff.status != "active":
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+
+    form = EditStaffForm(obj=staff)
+
+    if form.validate_on_submit():
+        form.populate_obj(staff)
+
+        db.session.commit()
+
+        if staff.status == "inactive":
+            for role in staff.staff_roles:
+                role.status = "inactive"
+
+        db.session.commit()
+
+        flash('Edits made.', 'success')
+
+        return redirect(f'/staff/{staff_id}')
+
+    return render_template('staff/edit-details.html', form=form, staff=staff)
+
+################################################################################
+# Projects and Project details
+
+@app.get('/projects')
+def show_projects():
+    """Show list of projects
+    Only show list of assigned projects for users below clearance level 4
+    Show all projects for users clearance level 4 and above"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    search = request.args.get("q")
+
+    if search:
+        projects = Project.query.filter(Project.name.like(f"%{search}%")).all()
+    else:
+        projects = Project.query.all()
+
+    return render_template('projects/all-projects.html', projects=projects)
 
 ################################################################################
 # Home route

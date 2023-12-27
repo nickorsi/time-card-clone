@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/staff">Staff</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Profile</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div>
+  <img
+    src="{{ staff.image_url }}"
+    alt="Profile image for {{ staff.first_name }}"
+    width="150">
+  <ul>
+    <li>First Name: {{ staff.first_name }}</li>
+    <li>Last Name: {{ staff.last_name }}</li>
+    <li>Email: {{ staff.email }}</li>
+    <li>Current Role(s)</li>
+    <ul>
+      {% for role in staff.staff_roles %}
+        {% if role.staff_id == staff.id and role.status == "active" %}
+          <li>{{ role.role }} on {{ role.project.name }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% if g.user.clearance > 4 or g.user.id == staff.id %}
+      <li>Project Experience</li>
+      <ul>
+        {% for project in staff.projects %}
+          {% if project.status == "active" %}
+            <li>{{ project.name }}</li>
+          {% elif project.status == "inactive" %}
+            <li>{{ project }} (Inactive)</li>
+          {% endif %}
+            <ul>
+              {% for role in project.staff_roles %}
+                {% if role.staff_id == staff.id and role.status == "active" %}
+                  <li>{{ role.role }}</li>
+                {% elif role.staff_id == staff.id and role.status == "inactive" %}
+                  <li>{{ role.role }} (Inactive)</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+        {% endfor %}
+      </ul>
+      <li>Clearance Level: {{ staff.clearance }}</li>
+      <li>Employment Status: {{ staff.status }}</li>
+    {% endif %}
+  </ul>
+  {% if g.user.clearance > 4 or g.user.id == staff.id %}
+    <a href="/staff/{{ staff.id }}/edit" class="btn btn-primary">Edit</a>
+  {% endif %}
+</div>
+
+{% endblock %}

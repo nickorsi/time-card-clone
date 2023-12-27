@@ -144,7 +144,7 @@ db.session.commit()
 staff1.staff_roles.append(
     StaffRole(
         project_code=project1.code,
-        staff_role="Exc Engineer"
+        role="Exc Engineer"
     )
 )
 
@@ -153,7 +153,7 @@ db.session.commit()
 staff2.staff_roles.append(
     StaffRole(
         project_code=project1.code,
-        staff_role="Exc Superintendent"
+        role="Exc Superintendent"
     )
 )
 
@@ -162,7 +162,7 @@ db.session.commit()
 staff3.staff_roles.append(
     StaffRole(
         project_code=project1.code,
-        staff_role="Business Controller"
+        role="Business Controller"
     )
 )
 
@@ -171,7 +171,7 @@ db.session.commit()
 staff4.staff_roles.append(
     StaffRole(
         project_code=project1.code,
-        staff_role="Project Engineer"
+        role="Project Engineer"
     )
 )
 
@@ -180,7 +180,7 @@ db.session.commit()
 staff5.staff_roles.append(
     StaffRole(
         project_code=project1.code,
-        staff_role="Project Admin"
+        role="Project Admin"
     )
 )
 
@@ -189,7 +189,7 @@ db.session.commit()
 staff5.staff_roles.append(
     StaffRole(
         project_code=project2.code,
-        staff_role="Project Admin"
+        role="Project Admin"
     )
 )
 
@@ -198,7 +198,8 @@ db.session.commit()
 staff6.staff_roles.append(
     StaffRole(
         project_code=project2.code,
-        staff_role="Project Admin"
+        role="Project Admin",
+        status='inactive',
     )
 )
 

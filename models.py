@@ -6,6 +6,8 @@ db = SQLAlchemy()
 
 bcrypt = Bcrypt()
 
+DEFAULT_USER_IMAGE = ("https://upload.wikimedia.org/wikipedia/commons/b/b5/" +
+"Windows_10_Default_Profile_Picture.svg")
 
 def connect_db(app):
     """Connect to database."""
@@ -93,16 +95,22 @@ class Staff(db.Model):
         unique=True,
     )
 
-    clearance = db.Column(
-        db.Integer,
-        db.ForeignKey('clearances.level'),
+    image_url = db.Column(
+        db.String(255),
         nullable=False,
-        default=0,
+        default=DEFAULT_USER_IMAGE,
     )
 
     password = db.Column(
         db.String(100),
         nullable=False,
+    )
+
+    clearance = db.Column(
+        db.Integer,
+        db.ForeignKey('clearances.level'),
+        nullable=False,
+        default=0,
     )
 
     status = db.Column(
@@ -111,13 +119,23 @@ class Staff(db.Model):
         default='active',
     )
 
+
     daily_reports = db.relationship('DailyReport', backref='author')
 
     def __repr__(self):
         return f"<Staff #{self.id}: {self.first_name}, {self.last_name}, {self.email}, {self.clearance}>"
 
     @classmethod
-    def register(cls, first_name, last_name, email, clearance, password, status="active"):
+    def register(
+        cls,
+        first_name,
+        last_name,
+        email,
+        password,
+        image_url=DEFAULT_USER_IMAGE,
+        clearance=0,
+        status="active"
+    ):
         """Register a staff person.
 
         Hashes password and adds user to session.
@@ -129,9 +147,10 @@ class Staff(db.Model):
             first_name=first_name,
             last_name=last_name,
             email=email,
-            clearance=clearance,
             password=hashed_pwd,
-            status=status
+            image_url=image_url,
+            clearance=clearance,
+            status=status,
         )
 
         db.session.add(staff)
@@ -152,7 +171,7 @@ class Staff(db.Model):
 
         staff = cls.query.filter_by(email=email).one_or_none()
 
-        if staff:
+        if staff and staff.status == "active":
             is_auth = bcrypt.check_password_hash(staff.password, password)
             if is_auth:
                 return staff
@@ -179,10 +198,16 @@ class StaffRole(db.Model):
         primary_key=True,
     )
 
-    staff_role = db.Column(
+    role = db.Column(
         db.String(50),
         nullable=False,
         default="",
+    )
+
+    status = db.Column(
+        db.String(50),
+        nullable=False,
+        default="active"
     )
 
     project = db.relationship('Project', backref="staff_roles")

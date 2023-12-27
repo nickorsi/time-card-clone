@@ -3,17 +3,17 @@
 {% block content %}
 
   <div class="row justify-content-md-center">
-    <div class="col-md-7 col-lg-5">
-      <h2 class="join-message">Sign In to Time Card Clone.</h2>
+    <div class="">
+      <h2>Sign In to Time Card Clone.</h2>
       <form method="POST" id="signup_form">
         {{ form.hidden_tag() }}
 
         {% for field in form if field.widget.input_type != 'hidden' %}
-          <div class="row">
-            {{ field.label(class="col-6")}}
-            {{ field(placeholder=field.label.text, class="col-6") }}
+          <div class="container">
+            {{ field.label(class="")}}
+            {{ field(placeholder=field.label.text, class="") }}
             {% for error in field.errors %}
-            <span class="text-danger">{{ error }}</span>
+              <span class="text-danger">{{ error }}</span>
             {% endfor %}
           </div>
         {% endfor %}

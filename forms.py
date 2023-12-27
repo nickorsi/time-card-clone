@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm #---> Make forms by subclassing off of the FlaskForm class, includes CSRF token in forms
 
-from wtforms import StringField, PasswordField #---> Import field types such as StringField and PasswordField
+from wtforms import StringField, PasswordField, IntegerField #---> Import field types such as StringField and PasswordField
 
-from wtforms.validators import InputRequired, Email, Length #---> Import validator methods such as InputRequired, Email, and Length
-from wtforms.validators import ValidationError
+from wtforms.validators import InputRequired, Email, Length, AnyOf
+from wtforms.validators import ValidationError, Optional, URL
 
 def not_empty(form,field):
     """Checks field data isn't empty after striped"""
@@ -18,7 +18,7 @@ def num_like(form,field):
         raise ValidationError('Must only have numbers in field.')
 
 
-class SignupStaff(FlaskForm):
+class SignupStaffFrom(FlaskForm):
     """Signup Staff Form"""
 
     first_name = StringField(
@@ -34,6 +34,11 @@ class SignupStaff(FlaskForm):
     email = StringField(
         "Email",
         validators=[InputRequired(), Email()]
+    )
+
+    image_url = StringField(
+        "Image URL",
+        validators=[Optional(), URL(), Length(max=250)]
     )
 
     password = PasswordField(
@@ -66,6 +71,30 @@ class ProjectForm(FlaskForm):
         "Project Name",
         validators=[InputRequired(), not_empty, Length(max=50)]
     )
+
+class EditStaffForm(FlaskForm):
+    """Edit Staff Form"""
+
+    first_name = StringField(
+        "First Name",
+        validators=[InputRequired(), not_empty, Length(max=30)]
+    )
+
+    last_name = StringField(
+        "Last Name",
+        validators=[InputRequired(), not_empty, Length(max=30)]
+    )
+
+    clearance = IntegerField(
+        "Clearance Lvel",
+        validators=[InputRequired(), AnyOf(values=[0,1,2,3,4,5])]
+    )
+
+    status = StringField(
+        "Employment Status",
+        validators=[InputRequired(), AnyOf(values=["active", "inactive"])]
+    )
+
 
 class CSRFForm(FlaskForm):
     """Form solely meant to genrate a CSRF token."""

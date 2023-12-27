@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Projects</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="row justify-content-md-center">
+    <div class="col-md-10 col-lg-8">
+      <h2>Projects</h2>
+      <p>Search project records by <strong>name</strong>.</p>
+      <form class="navbar-form navbar-end" action="/projects">
+        <input
+            name="q"
+            class="form-control"
+            placeholder="Search Time Card Clone"
+            aria-label="Search"
+            id="search">
+        <button class="btn btn-default">
+          <span class="bi bi-search"></span>
+        </button>
+    </div>
+    <div class="col-md-10 col-lg-8">
+      <table class="row">
+        <thead>
+          <tr class="row">
+            <th class="col-4">Code</th>
+            <th class="col-4">Name</th>
+            <th class="col-4">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if g.user.clearance < 4 %}
+            {% for project in g.user.projects %}
+              <tr class="row">
+                <td class="col-4">{{ project.code }}</td>
+                <td class="col-4">
+                  <a href="/projects/{{ project.id }}">
+                    {{ project.name }}
+                  </a>
+                </td>
+                <td class="col-4">{{ project.status }}</td>
+              </tr>
+            {% endfor %}
+          {% elif g.user.clearance > 3 %}
+            {% for project in projects %}
+              <tr class="row">
+                <td class="col-4">{{ project.code }}</td>
+                <td class="col-4">
+                  <a href="/projects/{{ project.id }}">
+                    {{ project.name }}
+                  </a>
+                </td>
+                <td class="col-4">{{ project.status }}</td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}
