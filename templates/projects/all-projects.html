@@ -18,6 +18,13 @@
   <div class="row justify-content-md-center">
     <div class="col-md-10 col-lg-8">
       <h2>Projects</h2>
+      {% if g.user.clearance > 3 %}
+        <p>
+          <a href="/projects/new" class="btn btn-primary">
+            Create New Project
+          </a>
+        </p>
+      {% endif %}
       <p>Search project records by <strong>name</strong>.</p>
       <form class="navbar-form navbar-end" action="/projects">
         <input
@@ -45,7 +52,7 @@
               <tr class="row">
                 <td class="col-4">{{ project.code }}</td>
                 <td class="col-4">
-                  <a href="/projects/{{ project.id }}">
+                  <a href="/projects/{{ project.code }}">
                     {{ project.name }}
                   </a>
                 </td>
@@ -57,7 +64,7 @@
               <tr class="row">
                 <td class="col-4">{{ project.code }}</td>
                 <td class="col-4">
-                  <a href="/projects/{{ project.id }}">
+                  <a href="/projects/{{ project.code }}">
                     {{ project.name }}
                   </a>
                 </td>

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Project Homepage</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+  <div>
+    <h1>Welcome to the {{ project.name }} project homepage!</h1>
+    <h4>
+      Use the links below to navigate to the project specific information:
+    </h4>
+    <ul>
+      <li>
+        <a href="/projects/{{ project.code }}/staff">
+            Project Staff
+        </a>
+      </li>
+      <li>
+        <a href="/projects/{{ project.code }}/craft">
+            Project Craft
+        </a>
+      </li>
+      <li>
+        <a href="/projects/{{ project.code }}/cost-codes">
+            Project Cost Codes
+        </a>
+      </li>
+      <li>
+        <a href="/projects/{{ project.code }}/time-cards">
+            Project Time Cards
+        </a>
+      </li>
+    </ul>
+  </div>
+{% endblock %}

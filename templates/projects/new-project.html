@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+      <li class="breadcrumb-item active" aria-current="page">New Project</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="row justify-content-md-center">
+    <div class="">
+      <h2>Sign In to Time Card Clone.</h2>
+      <form method="POST" id="new_project_form">
+        {{ form.hidden_tag() }}
+
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          <div class="container">
+            {{ field.label}}
+            {% if field.label.text == "Project Code" %}
+              {{ field(value=new_code, readonly=true)}}
+            {% else %}
+              {{ field(placeholder=field.label.text)}}
+            {% endif %}
+            {% for error in field.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <button class="btn btn-primary">Create</button>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

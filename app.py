@@ -6,6 +6,7 @@ from models import db, connect_db, Staff, Project
 from flask import Flask, request, render_template, redirect, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension  # ---> Debugger tool
 from forms import CSRFForm, SignupStaffFrom, LogInForm, EditStaffForm
+from forms import NewProjectForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -224,7 +225,7 @@ def edit_staff(staff_id):
 
         db.session.commit()
 
-        flash('Edits made.', 'success')
+        flash('Edits made!', 'success')
 
         return redirect(f'/staff/{staff_id}')
 
@@ -235,7 +236,7 @@ def edit_staff(staff_id):
 
 @app.get('/projects')
 def show_projects():
-    """Show list of projects
+    """Show list of projects.
     Only show list of assigned projects for users below clearance level 4
     Show all projects for users clearance level 4 and above"""
 
@@ -251,6 +252,74 @@ def show_projects():
         projects = Project.query.all()
 
     return render_template('projects/all-projects.html', projects=projects)
+
+@app.route('/projects/new', methods=["GET", "POST"])
+def new_project():
+    """Handle creation of a new project.
+    Must be clearance level 4 or above to create new project.
+    """
+
+    if not g.user or g.user.clearance < 4:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = NewProjectForm()
+
+    last_project = Project.query.order_by(Project.code.desc()).first()
+
+    new_code = int(last_project.code)+1
+
+    if form.validate_on_submit():
+
+        try:
+            project = Project(
+                code = form.code.data,
+                name = form.name.data,
+                status = form.status.data,
+            )
+
+            db.session.add(project)
+
+        except IntegrityError:
+            flash("The code must be 6 numbers long and be the very next" +
+                   "available project number.", 'danger')
+            return render_template("staff/signup.html", form=form)
+
+        db.session.commit()
+
+        flash('Project made!', 'success')
+
+        return redirect('/projects')
+
+    return render_template(
+        'projects/new-project.html',
+        form=form,
+        new_code=new_code
+    )
+
+@app.get('/projects/<project_code>')
+def show_project(project_code):
+    """Show the homepage for the specific project.
+
+    If the user is under clearance level 4, project must be assigned to them
+    and be active for authorized access.
+    If user is clearance level 4 and above, can view all projects.
+    """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    project = Project.query.get_or_404(f'{project_code}')
+
+    user_project_ids = [project.code for project in g.user.projects]
+
+    if project_code not in user_project_ids or project.status == "inactive":
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    return render_template("projects/project-details.html", project=project)
+
 
 ################################################################################
 # Home route
