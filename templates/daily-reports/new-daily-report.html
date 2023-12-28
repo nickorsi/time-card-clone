@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+      <li class="breadcrumb-item"><a href="/projects/{{ project.code }}">Project Homepage</a></li>
+      <li class="breadcrumb-item"><a href="/projects/{{ project.code }}/daily-reports">Daily Reports</a></li>
+      <li class="breadcrumb-item active" aria-current="page">New Daily Report</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+  <div class="container position-relative">
+    <h4>New Daily Report</h4>
+    <form method="post" id="daily-report-form">
+      <div>
+        <label for="name">Daily Report Name</label>
+        <input
+          id="name"
+          type="text"
+          required
+          maxlength="50">
+      </div>
+      <div>
+        <label for="author">Author</label>
+        <input
+          id="author"
+          type="text"
+          value="{{ g.user.first_name }} {{ g.user.last_name }}"
+          readonly
+          required>
+      </div>
+      <div class="invisible d-none">
+        <label for="author_id"></label>
+        <input
+          id="author_id"
+          name="author_id"
+          type="text"
+          value="{{ g.user.id }}">
+      </div>
+      <div>
+        <label for="approver">Approver</label>
+        <select name="approver" id="approver" required>
+          <option value="">--Please choose an approver--</option>
+          {% for staff in project.staff %}
+            {% if staff.status == "active" and staff.clearance > 1 %}
+              <option value="{{ staff.id }}">
+                {{ staff.first_name }} {{staff.last_name }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="date">Date Work Completed</label>
+        <input
+          id="date"
+          type="date"
+          required>
+      </div>
+      <div>
+        <button
+          id="add-code"
+          type="button"
+          class="btn btn-primary btn-md">
+            Add Codes
+        </button>
+        <button
+          id="add-craft"
+          type="button"
+          class="btn btn-primary btn-md">
+            Add Craft
+        </button>
+      </div>
+      <div>
+       <table>
+        <thead id="code-col">
+        </thead>
+        <tbody id="craft-row">
+        </tbody>
+       </table>
+      </div>
+    </form>
+    <form
+      id="craft-form"
+      class="popup hidden d-flex flex-column justify-content-around align-items-center">
+      <div>
+        <label for="craft">Craft People</label>
+        <select name="craft" id="craft-select" required>
+          <option value="">--Please choose a craft person--</option>
+          {% for craft in project.craft %}
+            {% if craft.status == "active" %}
+              <option value="{{ craft.id }}">
+                {{ craft.first_name }} {{ craft.last_name }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <button
+          id="cancel-craft"
+          type="button"
+          class="btn btn-primary btn-md">
+            Cancel
+        </button>
+        <button class="btn btn-primary btn-md">Add Craft</button>
+      </div>
+    </form>
+    <form
+      id="cost-code-form"
+      class="popup hidden d-flex flex-column justify-content-around align-items-center">
+      <div>
+        <label for="cost_code">Cost Codes</label>
+        <select name="cost_code" id="cost-code-select" required>
+          <option value="">--Please choose a cost code--</option>
+          {% for cost_code in project.cost_codes %}
+            {% if cost_code.status == "active" %}
+              <option value="{{ cost_code.code }}">
+                {{ cost_code.code }} {{ cost_code.name }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <button
+          id="cancel-code"
+          type="button"
+          class="btn btn-primary btn-md">
+            Cancel
+        </button>
+        <button class="btn btn-primary btn-md">Add Code</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="/static/dailyreport.js"></script>
+{% endblock %}

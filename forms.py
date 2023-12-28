@@ -90,7 +90,7 @@ class EditStaffForm(FlaskForm):
     )
 
     clearance = IntegerField(
-        "Clearance Lvel",
+        "Clearance Level",
         validators=[InputRequired(), AnyOf(values=[0,1,2,3,4,5])]
     )
 
@@ -120,6 +120,25 @@ class CSRFForm(FlaskForm):
 
 class NewProjectForm(FlaskForm):
     """Make new project"""
+
+    code = StringField(
+        "Project Code",
+        validators=[InputRequired(), not_empty, num_like, Length(min=6, max=6)]
+    )
+
+    name = StringField(
+        "Project Name",
+        validators=[InputRequired(), not_empty, Length(max=50)]
+    )
+
+    status = SelectField(
+        "Project Status",
+        choices=[("active", "Active"), ("inactive", "Inactive")],
+        validators=[InputRequired()]
+    )
+
+class EditProjectForm(FlaskForm):
+    """Edit project details"""
 
     code = StringField(
         "Project Code",

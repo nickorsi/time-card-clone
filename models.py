@@ -25,10 +25,17 @@ class Project(db.Model):
     -CraftRole (join table)
     -Craft
     -CostCode
+    -DailyReport
     """
 
     __tablename__ = "projects"
 
+    # Made project code a 6 character string rather than int with auto serial
+    # increment. Did this to make all project codes a number but be consistent
+    # in number length. For example 1 vs 000001, 2 vs 000002, etc. This makes it
+    # easier for lookup creates consistancy with the codes while allowing for
+    # lots of project availablity. But makes the creation and uniqueness more
+    # work in the code.
     code = db.Column(
         db.String(6),
         primary_key=True,
@@ -62,6 +69,12 @@ class Project(db.Model):
         backref="project"
     )
 
+    daily_reports = db.relationship(
+        'DailyReport',
+        order_by="DailyReport.date",
+        backref="project"
+    )
+
 
 class Staff(db.Model):
     """Staff members in the system.
@@ -72,6 +85,10 @@ class Staff(db.Model):
     """
 
     __tablename__ = "staff"
+
+    __table_args__ = (
+        db.UniqueConstraint("first_name", "last_name"),
+    )
 
     id = db.Column(
         db.Integer,
@@ -300,6 +317,8 @@ class CostCode(db.Model):
 
     __tablename__ = "cost_codes"
 
+    # Made the code a string rather than an int. Same reasoning as for the
+    # project codes.
     code = db.Column(
         db.String(20),
         primary_key=True,
@@ -313,7 +332,8 @@ class CostCode(db.Model):
 
     project_code = db.Column(
         db.String(20),
-        db.ForeignKey('projects.code')
+        db.ForeignKey('projects.code'),
+        nullable=False,
     )
 
     status = db.Column(
@@ -366,6 +386,7 @@ class Clearance(db.Model):
 class DailyReport(db.Model):
     """Daily Reports in the system.
     Relationships built to the following classes:
+    -Project
     -Staff
     -DailyReportItem
     -CostCodeSummary
@@ -380,8 +401,19 @@ class DailyReport(db.Model):
         autoincrement=True,
     )
 
+    name = db.Column(
+        db.String(50),
+        nullable=False,
+    )
+
     date = db.Column(
         db.Date,
+        nullable=False,
+    )
+
+    project_code = db.Column(
+        db.String(20),
+        db.ForeignKey('projects.code'),
         nullable=False,
     )
 
@@ -435,16 +467,19 @@ class DailyReportItem(db.Model):
     daily_report_id = db.Column(
         db.Integer,
         db.ForeignKey('daily_reports.id'),
+        nullable=False,
     )
 
     craft_id = db.Column(
         db.Integer,
         db.ForeignKey('craft.id'),
+        nullable=False,
     )
 
     cost_code = db.Column(
         db.String(20),
         db.ForeignKey('cost_codes.code'),
+        nullable=False,
     )
 
     hrs_worked = db.Column(

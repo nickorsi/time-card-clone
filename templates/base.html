@@ -8,54 +8,56 @@
   <link rel="stylesheet"
         href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css">
   <script src="https://unpkg.com/bootstrap"></script>
-
   <script src="https://unpkg.com/jquery"></script>
-
-
+  <link rel="stylesheet" href="/static/styling.css">
+</head>
 <body>
 
-<nav class="navbar navbar-expand">
-  <div class="container-fluid">
+  <nav class="navbar navbar-expand">
+    <div class="container-fluid">
 
-    <div class="navbar-header">
-      <a href="/" class="navbar-brand">
-        Home
-      </a>
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand">
+          Home
+        </a>
+      </div>
+
+      <ul class="nav navbar-nav navbar-right">
+
+        {% if not g.user %}
+          <li><a href="/signup" class="m-1">Sign up</a></li>
+          <li><a href="/login" class="m-1">Log in</a></li>
+        {% else %}
+          <li>
+            <a href="/staff/{{ g.user.id }}">
+              {{g.user.first_name}} {{ g.user.last_name }}
+            </a>
+          </li>
+          <form action="/logout" method="POST">
+            {{ g.csrf_form.hidden_tag() }}
+            <button class="btn btn-primary btn-sm">Log Out</button>
+          </form>
+        {% endif %}
+
+      </ul>
     </div>
+  </nav>
 
-    <ul class="nav navbar-nav navbar-right">
-
-      {% if not g.user %}
-        <li><a href="/signup" class="m-1">Sign up</a></li>
-        <li><a href="/login" class="m-1">Log in</a></li>
-      {% else %}
-        <li>
-          <a href="/staff/{{ g.user.id }}">
-            {{g.user.first_name}} {{ g.user.last_name }}
-          </a>
-        </li>
-        <form action="/logout" method="POST">
-          {{ g.csrf_form.hidden_tag() }}
-          <button class="btn btn-primary btn-sm">Log Out</button>
-        </form>
-      {% endif %}
-
-    </ul>
-  </div>
-</nav>
-
-{% block breadcrumb%}
-{% endblock %}
-
-<div class="container">
-
-  {% for category, message in get_flashed_messages(with_categories=True) %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-
-  {% block content %}
+  {% block breadcrumb%}
   {% endblock %}
 
-</div>
+  <div class="container">
+
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    {% block content %}
+    {% endblock %}
+
+  </div>
+
+  {% block script %}
+  {% endblock %}
 </body>
 </html>

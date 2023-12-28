@@ -1,0 +1,16 @@
+.popup {
+  position: absolute;
+  background-color: lightgrey;
+  inset: 0
+
+}
+
+.hidden {
+  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.test {
+  position: relative;
+}

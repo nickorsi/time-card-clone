@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+      <li class="breadcrumb-item"><a href="/projects/{{ project.code }}">Project Homepage</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Daily Reports</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="row justify-content-md-center">
+    <div class="col-md-10 col-lg-8">
+      <h2>Daily Reports</h2>
+      <p>
+        <a
+          href="/projects/{{ project.code }}/daily-reports/new"
+          class="btn btn-primary">
+            Create New Daily Report
+        </a>
+      </p>
+      <p>Search report records by <strong>author name</strong>.</p>
+      <form action="/projects/{{ project.code }}/daily-reports">
+        <input
+            name="q"
+            class="form-control"
+            placeholder="Search Daily Reports"
+            aria-label="Search"
+            id="search">
+        <button class="btn btn-default">
+          <span class="bi bi-search"></span>
+        </button>
+    </div>
+    <div class="col-md-10 col-lg-8">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in reports %}
+            <tr>
+              <td>{{ report.date }}</td>
+              <td>
+                <a href="/projects/{{ project.code }}/daily-reports/{{ report.id }}">
+                  {{ report.name }}
+                </a>
+              </td>
+              <td>{{ report.author.first_name }} {{ report.author.last_name }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}

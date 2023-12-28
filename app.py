@@ -1,12 +1,12 @@
 import os  # ---> When using SQL Alchmey
 
-from models import db, connect_db, Staff, Project
+from models import db, connect_db, Staff, Project, DailyReport
 
 
 from flask import Flask, request, render_template, redirect, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension  # ---> Debugger tool
 from forms import CSRFForm, SignupStaffFrom, LogInForm, EditStaffForm
-from forms import NewProjectForm
+from forms import NewProjectForm, EditProjectForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -160,7 +160,7 @@ def show_staff():
     search = request.args.get("q")
 
     if search:
-        staff = Staff.query.filter(Staff.first_name.like(f"%{search}%")).all()
+        staff = Staff.query.filter(Staff.first_name.ilike(f"%{search}%")).all()
     else:
         staff = Staff.query.all()
 
@@ -215,10 +215,32 @@ def edit_staff(staff_id):
     form = EditStaffForm(obj=staff)
 
     if form.validate_on_submit():
+        # Made readonly fields to prevent user from changing fields they
+        # shouldn't, but if they change html with dev tools have checks to make
+        # sure what should stay the same stays the same
+        if g.user.clearance < 5:
+            if (form.clearance.data != staff.clearance or
+                form.status.data != staff.status):
+                flash('You do not have clearance for these edits!', 'danger')
+                return render_template(
+                    'staff/edit-details.html',
+                    form=form, staff=staff
+                )
+
+        if g.user.id != staff.id:
+            if (form.first_name.data != staff.first_name or
+                form.last_name.data != staff.last_name):
+                flash('You do not have clearance for these edits!', 'danger')
+                return render_template(
+                    'staff/edit-details.html',
+                    form=form, staff=staff
+                )
+
         form.populate_obj(staff)
 
         db.session.commit()
 
+        # If employee is now inactive, their roles must also be inactive.
         if staff.status == "inactive":
             for role in staff.staff_roles:
                 role.status = "inactive"
@@ -247,7 +269,7 @@ def show_projects():
     search = request.args.get("q")
 
     if search:
-        projects = Project.query.filter(Project.name.like(f"%{search}%")).all()
+        projects = Project.query.filter(Project.name.ilike(f"%{search}%")).all()
     else:
         projects = Project.query.all()
 
@@ -270,7 +292,20 @@ def new_project():
     new_code = int(last_project.code)+1
 
     if form.validate_on_submit():
-
+        # Made readonly field for project code to prevent user from changing
+        # the auto generation and making a project code that isn't sequential.
+        # Below check is to make sure the field hasn't changed if readonly
+        # modified with dev tool.
+        if form.code.data != new_code:
+            flash('You do not have clearance to edit the project code!', 'danger')
+            return render_template(
+                'projects/new-project.html',
+                form=form,
+                new_code=new_code
+            )
+        # Still try making the project add in case another user is making a
+        # project at the same exact time. Except the error and flash a message
+        # to retry the process.
         try:
             project = Project(
                 code = form.code.data,
@@ -281,8 +316,8 @@ def new_project():
             db.session.add(project)
 
         except IntegrityError:
-            flash("The code must be 6 numbers long and be the very next" +
-                   "available project number.", 'danger')
+            flash("It looks like another project is already using this code." +
+                  "Please cancel out and try again.", 'danger')
             return render_template("staff/signup.html", form=form)
 
         db.session.commit()
@@ -314,12 +349,116 @@ def show_project(project_code):
 
     user_project_ids = [project.code for project in g.user.projects]
 
-    if project_code not in user_project_ids or project.status == "inactive":
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    if g.user.clearance < 4:
+        if project_code not in user_project_ids or project.status == "inactive":
+            flash("Access unauthorized.", "danger")
+            return redirect("/")
 
     return render_template("projects/project-details.html", project=project)
 
+@app.route('/projects/<project_code>/edit', methods=["GET", "POST"])
+def edit_project(project_code):
+    """Edit project details if clearance level 4 or above.
+    Can only edit name and status.
+    """
+
+    if not g.user or g.user.clearance < 4:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    project = Project.query.get_or_404(f'{project_code}')
+
+    form = EditProjectForm(obj=project)
+
+    if form.validate_on_submit():
+        if form.code.data != project.code:
+            flash('You do not have clearance to edit the project code!', 'danger')
+            return render_template(
+                'projects/edit-project-details.html',
+                form=form,
+            )
+
+        form.populate_obj(project)
+
+        db.session.commit()
+
+        # If project is now inactive, all roles must also be inactive.
+        if project.status == "inactive":
+            for role in project.staff_roles:
+                role.status = "inactive"
+
+        db.session.commit()
+
+        flash('Edits made!', 'success')
+
+        return redirect(f'/projects/{project.code}')
+
+    return render_template('projects/edit-project-details.html', form=form)
+
+
+################################################################################
+# Time Cards
+
+@app.get('/projects/<project_code>/daily-reports')
+def show_daily_reports(project_code):
+    """Shows list of daily reports associated with project
+    Must have clearance of at least 1 to see reports and create new ones on
+    active projects
+    Must have clearance of at least 4 to see reports on all projects
+    """
+
+    if not g.user or g.user.clearance < 1:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    project = Project.query.get_or_404(f'{project_code}')
+
+    if g.user.clearance < 4 and project.status == "inactive":
+        flash("Access unauthorized.", "danger")
+        return redirect("/projects")
+
+    search = request.args.get("q")
+
+    if search:
+        filter_reports = DailyReport.query.filter(
+            DailyReport.name.ilike(f"%{search}%")
+        )
+        filter_reports = filter_reports.filter(
+            DailyReport.project_code == project_code
+        )
+        reports = filter_reports.all()
+    else:
+        reports = project.daily_reports
+
+    return render_template(
+        'daily-reports/all-daily-reports.html',
+        reports=reports,
+        project=project
+    )
+
+@app.route(
+    '/projects/<project_code>/daily-reports/new',
+    methods=["GET","POST"],
+)
+def new_daily_report(project_code):
+    """Handle new daily report
+
+    Must have clearance of at least 1 to see reports and create new ones on
+    active projects
+    Must have clearance of at least 4 to see reports on all projects
+    """
+
+    if not g.user or g.user.clearance < 1:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    project = Project.query.get_or_404(f'{project_code}')
+
+    if g.user.clearance < 4 and project.status == "inactive":
+        flash("Access unauthorized.", "danger")
+        return redirect("/projects")
+
+    return render_template('daily-reports/new-daily-report.html', project=project)
 
 ################################################################################
 # Home route

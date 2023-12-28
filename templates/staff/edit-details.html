@@ -45,10 +45,10 @@
         </div>
         <div class="container">
           {{ form.clearance.label}}
-          {% if g.user.id == staff.id %}
-            {{ form.clearance(readonly=true) }}
-          {% elif g.user.clearance > 4 %}
+          {% if g.user.clearance > 4 %}
             {{ form.clearance }}
+          {% elif g.user.id == staff.id %}
+            {{ form.clearance(readonly=true) }}
           {% endif %}
           {% for error in form.clearance.errors %}
             <span class="text-danger">{{ error }}</span>
@@ -56,10 +56,14 @@
         </div>
         <div class="container">
           {{ form.status.label}}
-          {% if g.user.id == staff.id %}
-            {{ form.status(readonly=true) }}
-          {% elif g.user.clearance > 4 %}
+          {% if g.user.clearance > 4 %}
             {{ form.status }}
+            <p class="text-danger">Note: Changing the employee status to
+              "inactive" will also change all of their associated roles to
+              "inactive" as well.
+            </p>
+          {% elif g.user.id == staff.id %}
+            {{ form.status(readonly=true) }}
           {% endif %}
           {% for error in form.status.errors %}
             <span class="text-danger">{{ error }}</span>

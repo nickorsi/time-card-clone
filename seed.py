@@ -263,7 +263,7 @@ code1 = CostCode(
     code="1000",
     name="Clear and Grub",
     project_code=project1.code,
-    status="open",
+    status="active",
     budgeted_qty=22500,
     qty_units="SF",
     budgeted_mhrs=20,
@@ -277,7 +277,7 @@ code2 = CostCode(
     code="1001",
     name="Excavate",
     project_code=project1.code,
-    status="open",
+    status="active",
     budgeted_qty=8333,
     qty_units="CY",
     budgeted_mhrs=42,
@@ -291,7 +291,7 @@ code3 = CostCode(
     code="1002",
     name="Haul/Dump Exc",
     project_code=project1.code,
-    status="open",
+    status="active",
     budgeted_qty=8333,
     qty_units="CY",
     budgeted_mhrs=420,
@@ -305,9 +305,12 @@ db.session.commit()
 
 daily1 = DailyReport(
     date="2023.12.21",
+    name="Day 1: Clear and Exc",
+    project_code="100000",
     author_id=staff1.id,
     approver_id=staff2.id,
-    status="approved")
+    status="approved"
+)
 
 db.session.add(daily1)
 db.session.commit()

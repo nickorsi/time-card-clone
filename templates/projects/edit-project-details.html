@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+
+<nav aria-label="breadcrumb">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+      <li class="breadcrumb-item"><a href="/projects/{{ form.code.data }}">Project Homepage</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Edit Project</li>
+    </ol>
+  </div>
+</nav>
+
+{% endblock %}
+
+{% block content %}
+<div>
+  <h2>Edit Project.</h2>
+      <form method="POST" id="project_edit_form">
+        {{ form.hidden_tag() }}
+
+        <div class="container">
+          {{ form.code.label}}
+          {{ form.code(readonly=true) }}
+          {% for error in form.code.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="container">
+          {{ form.name.label}}
+          {{ form.name }}
+          {% for error in form.name.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="container">
+          {{ form.status.label}}
+          {{ form.status }}
+          {% for error in form.status.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <a href="/projects/{{ form.code.data }}" class="btn btn-secondary">Cancel</a>
+        <button class="btn btn-primary">Save</button>
+      </form>
+</div>
+
+{% endblock %}
