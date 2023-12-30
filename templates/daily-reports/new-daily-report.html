@@ -24,6 +24,7 @@
         <label for="name">Daily Report Name</label>
         <input
           id="name"
+          name="name"
           type="text"
           required
           maxlength="50">
@@ -32,6 +33,7 @@
         <label for="author">Author</label>
         <input
           id="author"
+          name="author"
           type="text"
           value="{{ g.user.first_name }} {{ g.user.last_name }}"
           readonly
@@ -62,6 +64,7 @@
         <label for="date">Date Work Completed</label>
         <input
           id="date"
+          name="date"
           type="date"
           required>
       </div>
@@ -82,6 +85,9 @@
       <div>
        <table>
         <thead id="code-col">
+          <tr>
+            <th></th>
+          </tr>
         </thead>
         <tbody id="craft-row">
         </tbody>
@@ -119,7 +125,7 @@
       class="popup hidden d-flex flex-column justify-content-around align-items-center">
       <div>
         <label for="cost_code">Cost Codes</label>
-        <select name="cost_code" id="cost-code-select" required>
+        <select name="cost_code" id="code-select" required>
           <option value="">--Please choose a cost code--</option>
           {% for cost_code in project.cost_codes %}
             {% if cost_code.status == "active" %}
