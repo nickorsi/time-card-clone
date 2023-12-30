@@ -280,13 +280,21 @@ function addCode(code, name){
       align-items-center
       craft-note
       code-${code}">
+      <label for="total-qty-${code}">
+        Total Qty
+      </label>
+      <input
+        id="total-qty-${code}"
+        name="total-qty-${code}"
+        type="number"
+        required>
       <label for="code-notes-${code}">
         Notes
       </label>
       <textarea
         id="code-notes-${code}"
         name="code-notes-${code}"
-        rows="8"
+        rows="5"
         cols="33"></textarea>
     </div>`
   );
