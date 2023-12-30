@@ -58,11 +58,22 @@ function showCodeNote(evt) {
 
 /** deleteResource will delete any resource added to the daily report. */
 function deleteResource(evt) {
+  console.log("deleteResource", evt)
   const resourceId = $(evt.target).attr("class");
   const $elements = $(`.${resourceId}`);
 
   for(const element of $elements) {
     $(element).remove();
+  }
+
+  const splitResourceId = resourceId.split("-");
+
+  const $cells = $("td");
+
+  for(const cell of $cells) {
+    if($(cell).data(splitResourceId[0]) === splitResourceId[1]) {
+      $(cell).remove();
+    }
   }
 }
 
@@ -199,7 +210,6 @@ function addCraft(id, name){
  * adds the code to the daily report form. */
 
 function handleSubmitAddCode(evt) {
-  console.log("handleSubmitAddCode")
   evt.preventDefault();
   const $target = $($(evt.target).closest("form"));
   $target.toggleClass("hidden");
@@ -216,7 +226,6 @@ function handleSubmitAddCode(evt) {
  * -Add new td cells into each craft row that doesn't have a td cell already
  */
 function addCode(code, name){
-  console.log("addCode", code, name)
   const $codeCols = $("#code-col tr th");
 
   for(const col of $codeCols) {
